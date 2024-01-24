@@ -1,0 +1,46 @@
+apiVersion: vs.axis-dev.io/v1
+kind: AssemblyLine
+metadata:
+  name: demo-app-deploy
+spec:
+  params:
+    - name: gitRevision
+      description: ""
+  results:
+    - name: endpoint
+      value: $(stages.resolve-ip.results.ipAddress)
+  artifacts: []
+  stages:
+    - name: build
+      spec:
+        deployment:
+          app: demo-app
+          name: gke
+        params:
+          - name: gitRevision
+            value: $(inputs.gitRevision)
+          - name: imageTag
+            value: $(inputs.gitRevision)
+        pipeline: demo-app-build
+    - name: deploy
+      spec:
+        deployment:
+          app: demo-app
+          name: gke
+        params:
+          - name: gitRevision
+            value: $(inputs.gitRevision)
+          - name: imageName
+            value: $(stages.build.results.imageFullNameTag)
+        pipeline: demo-app-deploy
+      runAfter:
+        - build
+    - name: resolve-ip
+      spec:
+        deployment:
+          app: demo-app
+          name: gke
+        params: []
+        pipeline: demo-app-resolve-ip-address-after-deploy
+      runAfter:
+        - deploy
