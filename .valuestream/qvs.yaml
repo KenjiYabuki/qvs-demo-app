@@ -1,0 +1,27 @@
+params:
+  - name: k8sNamespace
+    type: string
+  - name: imageName
+    type: string
+
+modules:
+  - name: github.com/KenjiYabuki/qvs-demo-app
+    local: 
+      path: .
+
+designPatterns:
+  - pattern: qmonus.net/adapter/official/pipeline/build:buildkitGcp
+  - pattern: qmonus.net/adapter/official/kubernetes/deployment/simple
+    params:
+      k8sNamespace: $(params.k8sNamespace)
+      imageName:    $(params.imageName)
+      appName: demo-app
+      port: "80"
+      replicas: "1"
+  - pattern: qmonus.net/adapter/official/kubernetes/sample:loadbalancer 
+    params:
+      k8sNamespace: $(params.k8sNamespace)
+      appName: demo-app
+      port: "80"
+  - pattern: qmonus.net/adapter/official/pipeline/deploy:simple
+  - pattern: qmonus.net/adapter/official/pipeline/sample:resolveIPAddress
