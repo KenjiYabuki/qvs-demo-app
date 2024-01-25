@@ -27,3 +27,4 @@ designPatterns:
       port: "80"
   - pattern: qmonus.net/adapter/official/pipeline/deploy:simple
   - pattern: qmonus.net/adapter/official/pipeline/sample:resolveIPAddress
+  - pattern: github.com/KenjiYabuki/qvs-demo-app/pipeline/test:healthcheck
