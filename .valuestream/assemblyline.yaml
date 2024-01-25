@@ -7,40 +7,41 @@ spec:
     - name: gitRevision
       description: ""
   results:
-    - name: endpoint
+    - name: apiEndpoint
       value: $(stages.resolve-ip.results.ipAddress)
-  artifacts: []
+  artifacts:
+    - path: .
   stages:
     - name: build
       spec:
         deployment:
-          app: demo-app
-          name: gke
+          app: qvs-demo-app
+          name: gcp-dev
         params:
           - name: gitRevision
             value: $(inputs.gitRevision)
           - name: imageTag
             value: $(inputs.gitRevision)
-        pipeline: demo-app-build
+        pipeline: qvs-demo-app-build
     - name: deploy
       spec:
         deployment:
-          app: demo-app
-          name: gke
+          app: qvs-demo-app
+          name: gcp-dev
         params:
           - name: gitRevision
             value: $(inputs.gitRevision)
           - name: imageName
             value: $(stages.build.results.imageFullNameTag)
-        pipeline: demo-app-deploy
+        pipeline: qvs-demo-app-deploy
       runAfter:
         - build
     - name: resolve-ip
       spec:
         deployment:
-          app: demo-app
-          name: gke
+          app: qvs-demo-app
+          name: gcp-dev
         params: []
-        pipeline: demo-app-resolve-ip-address-after-deploy
+        pipeline: qvs-demo-app-resolve-ip-address-after-deploy
       runAfter:
         - deploy
